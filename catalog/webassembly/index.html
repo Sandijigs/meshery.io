@@ -24,12 +24,12 @@
 <meta property="og:url" content="https://meshery.io/catalog/webassembly/" />
 <meta property="og:site_name" content="Meshery" />
 <meta property="og:type" content="article" />
-<meta property="article:published_time" content="2026-10-28T15:50:42+00:00" />
-<meta property="article:modified_time" content="2026-10-28T15:50:42+00:00" />
+<meta property="article:published_time" content="2026-11-25T15:58:26+00:00" />
+<meta property="article:modified_time" content="2026-11-25T15:58:26+00:00" />
 <meta name="twitter:card" content="summary" />
 <meta name="twitter:title" content="Cloud Native Catalog" />
 <script type="application/ld+json">
-{"@context":"https://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"The Meshery Authors"},"dateModified":"2026-10-28T15:50:42+00:00","datePublished":"2026-10-28T15:50:42+00:00","description":"WASM FILTER HTTP Auth FILTER001 WASM FILTER &lt;/a&gt; &times; RELATED DESIGNS HTTP AUTH What this filter does Simulates handling authentication of requests at proxy level. Requests with a header token with value hello are accepted as authorized while the rest unauthorized. The actual authentication is handled by the Upstream server. Whenever the proxy receives a request it extracts the token header and makes a request to the Upstream server which validates the token and returns a response. ...read more Caveats and Considerations Test: curl -H &quot;token&quot;:&quot;hello&quot; 0.0.0.0:18000 -v # Authorized curl -H &quot;token&quot;:&quot;world&quot; 0.0.0.0:18000 -v # Unauthorized Technologies Related Design…","headline":"Cloud Native Catalog","mainEntityOfPage":{"@type":"WebPage","@id":"https://meshery.io/catalog/webassembly/"},"publisher":{"@type":"Organization","logo":{"@type":"ImageObject","url":"https://meshery.io/assets/images/logos/meshery-gradient.png"},"name":"The Meshery Authors"},"url":"https://meshery.io/catalog/webassembly/"}</script>
+{"@context":"https://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"The Meshery Authors"},"dateModified":"2026-11-25T15:58:26+00:00","datePublished":"2026-11-25T15:58:26+00:00","description":"WASM FILTER HTTP Auth FILTER001 WASM FILTER &lt;/a&gt; &times; RELATED DESIGNS HTTP AUTH What this filter does Simulates handling authentication of requests at proxy level. Requests with a header token with value hello are accepted as authorized while the rest unauthorized. The actual authentication is handled by the Upstream server. Whenever the proxy receives a request it extracts the token header and makes a request to the Upstream server which validates the token and returns a response. ...read more Caveats and Considerations Test: curl -H &quot;token&quot;:&quot;hello&quot; 0.0.0.0:18000 -v # Authorized curl -H &quot;token&quot;:&quot;world&quot; 0.0.0.0:18000 -v # Unauthorized Technologies Related Design…","headline":"Cloud Native Catalog","mainEntityOfPage":{"@type":"WebPage","@id":"https://meshery.io/catalog/webassembly/"},"publisher":{"@type":"Organization","logo":{"@type":"ImageObject","url":"https://meshery.io/assets/images/logos/meshery-gradient.png"},"name":"The Meshery Authors"},"url":"https://meshery.io/catalog/webassembly/"}</script>
 <!-- End Jekyll SEO tag -->
  <link type="application/atom+xml" rel="alternate" href="https://meshery.io/feed.xml" title="Meshery" /> 
     <link rel="stylesheet" href="/css/stellarnav.css" />
@@ -77,7 +77,9 @@
       </script>
     <link
       rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.11.2/css/all.css"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.11.2/css/all.min.css"
+      integrity="sha384-KA6wR/X5RY4zFAHpv/CnoG2UW1uogYfdnP67Uv7eULvTveboZJg0qUpmJZb5VqzN"
+      crossorigin="anonymous"
     />
     <link rel="stylesheet" href="/css/subscribe.css" />
 
@@ -100,12 +102,27 @@
   </head>
  
     <body style="overflow-x: hidden" class="dark-mode">
+      <a href="#main-content" class="skip-to-content">Skip to main content</a>
 
       <script>
         
         window.siteBaseUrl = "";
 
         const body = document.body;
+
+        const BANNER_KEY = "sitewideBannerDismissed";
+
+        function isBannerDismissed() {
+            try {
+              return localStorage.getItem(BANNER_KEY) === "true";
+            } catch {
+              return false;
+            }
+          }
+
+        if (isBannerDismissed()) {
+            document.documentElement.classList.add("banner-dismissed");
+          }
     
         if (localStorage.getItem("mode") === "light-mode") {
           body.classList.remove("dark-mode");
@@ -113,15 +130,15 @@
           let allLogos = document.querySelectorAll("#logo-dark-light, .logo-dark-light");
           allLogos.forEach(e => e.src = e.dataset.logoForLight);
         }
-    
+
         // Automatically set logos based on initial theme
         document.addEventListener('DOMContentLoaded', () => {
           let allLogos = document.querySelectorAll("#logo-dark-light, .logo-dark-light");
           allLogos.forEach(e => {
             e.src = body.classList.contains("dark-mode") ? e.dataset.logoForDark : e.dataset.logoForLight;
           });
-          
-          // emit the theme event 
+
+          // emit the theme event
           document.dispatchEvent(new CustomEvent("themeChange",{
 			      detail : {value : localStorage.getItem("mode")},
 			      bubbles: true ,
@@ -132,14 +149,25 @@
         document.addEventListener("DOMContentLoaded", function() {
           // $('.sitewide-banner').animate({top: 0});
           const banner = document.querySelector(".sitewide-banner");
-          if (!banner) {
+          if (!banner || isBannerDismissed()) {
             return;
           }
           setTimeout(function() {
             banner.classList.remove("hidden");
             
           }, 0); // Add a delay of 1 second before showing the banner
+
+        const closeBtn = banner.querySelector(".banner-close");
+          if (closeBtn) {
+            closeBtn.addEventListener("click", function () {
+              banner.classList.add("dismissed");
+              try {
+                localStorage.setItem(BANNER_KEY, "true");
+              } catch { }
+            });
+          };
         });
+
       </script>
 
     
@@ -151,10 +179,13 @@
 
 <!-- Sitewide Banner -->
 <div class="sitewide-banner hidden">
-  <p>Meshery is now a CNCF Incubating project.</p>
+  <p>Meshery is a CNCF Incubating project.</p>
   <p>
     <a href="https://www.cncf.io/blog/2026/10/07/meshery-becomes-a-cncf-incubating-project/">Read the announcement</a>
   </p>
+  <button class="banner-close" type="button" aria-label="close announcement button">
+    &times;
+  </button>
 </div>
 <header id="mainHeader" class="filledHeader">
   
@@ -162,7 +193,7 @@
     <div class="container nav-container">
   
       <div class="project-name">
-        <a href="/">
+        <a href="/" >
           <img src="/assets/images/logos/meshery-logo.png" alt="Meshery Logo" />&nbsp;
           <img src="/assets/images/logos/meshery-logo-text.png"
             data-logo-for-dark="/assets/images/logos/meshery-logo-text.png"
@@ -523,6 +554,7 @@
   </header>
 
 
+<main id="main-content" tabindex="-1">
 <div class="content">
 	<section class="page">
 		<div class="container ">
@@ -696,7 +728,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    margin: 2rem;
+    margin: 1.25rem 0;
     color: var(--color-primary-dark);
   }
 
@@ -707,13 +739,8 @@
 
   .feature-container {
     gap: 40px;
-    margin-top: 5rem;
-  }
-
-  @media screen and (min-width: 600px) {
-    .feature-container {
-      min-height: 600px;
-    }
+    margin-top: 2.5rem;
+    margin-bottom: 2rem;
   }
 </style>
 <h2 class="catalog-heading">Cloud Native Design Catalog</h2>
@@ -740,7 +767,7 @@
   .help-modal {
     display: none; /* Hidden by default */
     position: fixed; /* Stay in place */
-    z-index: 200; /* Sit on top */
+    z-index: 3000; /* Sit above header ($z-index-header is 2001 in _sass/variables.scss) */
     inset: 0; /* top:0; right:0; bottom:0; left:0 */
     width: 100vw; /* Full width */
     height: 100vh; /* Full height */
@@ -760,7 +787,15 @@
 /* Style the tab */
 .tab {
   overflow: hidden;
-  background-color: #00D3A9;
+  background-color: var(--brand-color-primary);
+}
+
+/* Make the tab bar span the full modal width.
+   Overrides the generic `.tab { width: 70% }` from _sass/features.scss. */
+.help-modal .tab {
+  width: 100%;
+  box-sizing: border-box;
+  border-radius: 0;
 }
 
 /* Style the buttons that are used to open the tab content */
@@ -776,13 +811,13 @@
 
 /* Change background color of buttons on hover */
 .tab button:hover {
-  background-color: #00B39F;
+  background-color: var(--brand-color-secondary);
 }
 
 /* Create an active/current tablink class */
 .tab button.active {
   background-color: #1E2117;
-  color: "#fff"
+  color: #fff;
 }
 
 /* Style the tab content */
@@ -972,7 +1007,7 @@ function openTab(evt, tabName) {
         >
           <p class="text-sm-medium title">Designs</p>
           <span class="count-text" style="color: #00b39f">
-            398
+            421
           </span>
         </div>
         <div style="height: 3rem; width: 5rem">
@@ -1199,7 +1234,7 @@ function openTab(evt, tabName) {
            <small class="pattern-type"> WASM FILTER</small>
        </div>
        <h4 class="pattern-name">HTTP Auth</h4>
-       <img class= "pattern-filter-image" src="https://raw.githubusercontent.com/meshery-extensions/meshery-extensions-packages/master/action-assets/design-assets/.png" onerror="this.src='/assets/images/webassembly_logo.svg'" loading="lazy"/>
+       <img class= "pattern-filter-image" src="https://cdn.jsdelivr.net/gh/meshery-extensions/meshery-extensions-packages@master/action-assets/design-assets/.png" onerror="this.src='/assets/images/webassembly_logo.svg'" loading="lazy" decoding="async"/>
        <div>
     
     <h6 class="pattern-id">
@@ -1239,15 +1274,62 @@ function openTab(evt, tabName) {
       
       <img
         class="image-class"
-        src="https://raw.githubusercontent.com/meshery-extensions/meshery-extensions-packages/master/action-assets/design-assets/.png"
+        src="https://cdn.jsdelivr.net/gh/meshery-extensions/meshery-extensions-packages@master/action-assets/design-assets/.png"
         onerror="this.src='/assets/images/webassembly_logo.svg'"
         loading="lazy"
+        decoding="async"
         onclick="toggleFullScreenImage('')"
       />
       
       <div class="related-patterns-img">
         <h4 class="related-patterns">RELATED DESIGNS</h4>
         <!-- more conditions will be needed to be added when more patterns are introduced.  -->
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
 
     
 
@@ -2889,6 +2971,52 @@ function openTab(evt, tabName) {
 
     
 
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
 
       </div>
    
@@ -2905,17 +3033,15 @@ function openTab(evt, tabName) {
 
        
         
-        <a href="/catalog/https://github.com/meshery-extensions/wasm-filters/releases/download/v0.2.3/http_auth_bg.wasm" download="HTTP Auth.yml">
-          <button id="resourceDownloadBtn" data-patternId="" onclick="sendCloudTelemetry()"
-            class="import import-brand-secondary" style="width: 7rem;">
-            Download
-          </button>
+        <a class="cstore-cta-secondary" id="resourceDownloadBtn" data-patternId=""
+          onclick="sendCloudTelemetry()" href="/catalog/https://github.com/meshery-extensions/wasm-filters/releases/download/v0.2.3/http_auth_bg.wasm" download="HTTP Auth.yml">
+          Download
         </a>
 
         <div class="btn-tooltip-grp">
           <a class="btn tooltip-modal" data-clipboard-target="#copy-url" data-clipboard-text="https://github.com/meshery-extensions/wasm-filters/releases/download/v0.2.3/http_auth_bg.wasm"
             onmouseout="resetCopyText(this)">
-            <button class="import import-brand-tertiary" style="width: 7rem;">
+            <button class="import import-brand-tertiary copy-url-btn" style="width: 7rem;">
               Copy URL
             </button>
           </a>
@@ -2989,7 +3115,7 @@ function openTab(evt, tabName) {
         });
 
         btnClose[i].addEventListener('click', function () {
-            modal[i].style.visiblity = "hidden";
+            modal[i].style.visibility = "hidden";
             modal[i].style.opacity = "0";
             modal[i].style.pointerEvents = "none";
 
@@ -2998,7 +3124,7 @@ function openTab(evt, tabName) {
         modal[i].addEventListener('click', function (event) {
             let clickId = event.target.id
             if (clickId === "open-modal") {
-                modal[i].style.visiblity = "hidden";
+                modal[i].style.visibility = "hidden";
                 modal[i].style.opacity = "0";
                 modal[i].style.pointerEvents = "none";
             }
@@ -3027,7 +3153,7 @@ function openTab(evt, tabName) {
            <small class="pattern-type"> WASM FILTER</small>
        </div>
        <h4 class="pattern-name">TCP Metrics</h4>
-       <img class= "pattern-filter-image" src="https://raw.githubusercontent.com/meshery-extensions/meshery-extensions-packages/master/action-assets/design-assets/.png" onerror="this.src='/assets/images/webassembly_logo.svg'" loading="lazy"/>
+       <img class= "pattern-filter-image" src="https://cdn.jsdelivr.net/gh/meshery-extensions/meshery-extensions-packages@master/action-assets/design-assets/.png" onerror="this.src='/assets/images/webassembly_logo.svg'" loading="lazy" decoding="async"/>
        <div>
     
     <h6 class="pattern-id">
@@ -3067,15 +3193,62 @@ function openTab(evt, tabName) {
       
       <img
         class="image-class"
-        src="https://raw.githubusercontent.com/meshery-extensions/meshery-extensions-packages/master/action-assets/design-assets/.png"
+        src="https://cdn.jsdelivr.net/gh/meshery-extensions/meshery-extensions-packages@master/action-assets/design-assets/.png"
         onerror="this.src='/assets/images/webassembly_logo.svg'"
         loading="lazy"
+        decoding="async"
         onclick="toggleFullScreenImage('')"
       />
       
       <div class="related-patterns-img">
         <h4 class="related-patterns">RELATED DESIGNS</h4>
         <!-- more conditions will be needed to be added when more patterns are introduced.  -->
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
 
     
 
@@ -4717,6 +4890,52 @@ function openTab(evt, tabName) {
 
     
 
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
 
       </div>
    
@@ -4733,17 +4952,15 @@ function openTab(evt, tabName) {
 
        
         
-        <a href="/catalog/https://github.com/meshery-extensions/wasm-filters/releases/download/v0.2.3/tcp_metrics_bg.wasm" download="TCP Metrics.yml">
-          <button id="resourceDownloadBtn" data-patternId="" onclick="sendCloudTelemetry()"
-            class="import import-brand-secondary" style="width: 7rem;">
-            Download
-          </button>
+        <a class="cstore-cta-secondary" id="resourceDownloadBtn" data-patternId=""
+          onclick="sendCloudTelemetry()" href="/catalog/https://github.com/meshery-extensions/wasm-filters/releases/download/v0.2.3/tcp_metrics_bg.wasm" download="TCP Metrics.yml">
+          Download
         </a>
 
         <div class="btn-tooltip-grp">
           <a class="btn tooltip-modal" data-clipboard-target="#copy-url" data-clipboard-text="https://github.com/meshery-extensions/wasm-filters/releases/download/v0.2.3/tcp_metrics_bg.wasm"
             onmouseout="resetCopyText(this)">
-            <button class="import import-brand-tertiary" style="width: 7rem;">
+            <button class="import import-brand-tertiary copy-url-btn" style="width: 7rem;">
               Copy URL
             </button>
           </a>
@@ -4817,7 +5034,7 @@ function openTab(evt, tabName) {
         });
 
         btnClose[i].addEventListener('click', function () {
-            modal[i].style.visiblity = "hidden";
+            modal[i].style.visibility = "hidden";
             modal[i].style.opacity = "0";
             modal[i].style.pointerEvents = "none";
 
@@ -4826,7 +5043,7 @@ function openTab(evt, tabName) {
         modal[i].addEventListener('click', function (event) {
             let clickId = event.target.id
             if (clickId === "open-modal") {
-                modal[i].style.visiblity = "hidden";
+                modal[i].style.visibility = "hidden";
                 modal[i].style.opacity = "0";
                 modal[i].style.pointerEvents = "none";
             }
@@ -4855,7 +5072,7 @@ function openTab(evt, tabName) {
            <small class="pattern-type"> WASM FILTER</small>
        </div>
        <h4 class="pattern-name">TCP Packet Parse</h4>
-       <img class= "pattern-filter-image" src="https://raw.githubusercontent.com/meshery-extensions/meshery-extensions-packages/master/action-assets/design-assets/.png" onerror="this.src='/assets/images/webassembly_logo.svg'" loading="lazy"/>
+       <img class= "pattern-filter-image" src="https://cdn.jsdelivr.net/gh/meshery-extensions/meshery-extensions-packages@master/action-assets/design-assets/.png" onerror="this.src='/assets/images/webassembly_logo.svg'" loading="lazy" decoding="async"/>
        <div>
     
     <h6 class="pattern-id">
@@ -4895,15 +5112,62 @@ function openTab(evt, tabName) {
       
       <img
         class="image-class"
-        src="https://raw.githubusercontent.com/meshery-extensions/meshery-extensions-packages/master/action-assets/design-assets/.png"
+        src="https://cdn.jsdelivr.net/gh/meshery-extensions/meshery-extensions-packages@master/action-assets/design-assets/.png"
         onerror="this.src='/assets/images/webassembly_logo.svg'"
         loading="lazy"
+        decoding="async"
         onclick="toggleFullScreenImage('')"
       />
       
       <div class="related-patterns-img">
         <h4 class="related-patterns">RELATED DESIGNS</h4>
         <!-- more conditions will be needed to be added when more patterns are introduced.  -->
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
 
     
 
@@ -6545,6 +6809,52 @@ function openTab(evt, tabName) {
 
     
 
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
 
       </div>
    
@@ -6561,17 +6871,15 @@ function openTab(evt, tabName) {
 
        
         
-        <a href="/catalog/https://github.com/meshery-extensions/wasm-filters/releases/download/v0.2.3/tcp_packet_parse_bg.wasm" download="TCP Packet Parse.yml">
-          <button id="resourceDownloadBtn" data-patternId="" onclick="sendCloudTelemetry()"
-            class="import import-brand-secondary" style="width: 7rem;">
-            Download
-          </button>
+        <a class="cstore-cta-secondary" id="resourceDownloadBtn" data-patternId=""
+          onclick="sendCloudTelemetry()" href="/catalog/https://github.com/meshery-extensions/wasm-filters/releases/download/v0.2.3/tcp_packet_parse_bg.wasm" download="TCP Packet Parse.yml">
+          Download
         </a>
 
         <div class="btn-tooltip-grp">
           <a class="btn tooltip-modal" data-clipboard-target="#copy-url" data-clipboard-text="https://github.com/meshery-extensions/wasm-filters/releases/download/v0.2.3/tcp_packet_parse_bg.wasm"
             onmouseout="resetCopyText(this)">
-            <button class="import import-brand-tertiary" style="width: 7rem;">
+            <button class="import import-brand-tertiary copy-url-btn" style="width: 7rem;">
               Copy URL
             </button>
           </a>
@@ -6645,7 +6953,7 @@ function openTab(evt, tabName) {
         });
 
         btnClose[i].addEventListener('click', function () {
-            modal[i].style.visiblity = "hidden";
+            modal[i].style.visibility = "hidden";
             modal[i].style.opacity = "0";
             modal[i].style.pointerEvents = "none";
 
@@ -6654,7 +6962,7 @@ function openTab(evt, tabName) {
         modal[i].addEventListener('click', function (event) {
             let clickId = event.target.id
             if (clickId === "open-modal") {
-                modal[i].style.visiblity = "hidden";
+                modal[i].style.visibility = "hidden";
                 modal[i].style.opacity = "0";
                 modal[i].style.pointerEvents = "none";
             }
@@ -6683,7 +6991,7 @@ function openTab(evt, tabName) {
            <small class="pattern-type"> WASM FILTER</small>
        </div>
        <h4 class="pattern-name">Singleton HTTP Call</h4>
-       <img class= "pattern-filter-image" src="https://raw.githubusercontent.com/meshery-extensions/meshery-extensions-packages/master/action-assets/design-assets/.png" onerror="this.src='/assets/images/webassembly_logo.svg'" loading="lazy"/>
+       <img class= "pattern-filter-image" src="https://cdn.jsdelivr.net/gh/meshery-extensions/meshery-extensions-packages@master/action-assets/design-assets/.png" onerror="this.src='/assets/images/webassembly_logo.svg'" loading="lazy" decoding="async"/>
        <div>
     
     <h6 class="pattern-id">
@@ -6723,15 +7031,62 @@ function openTab(evt, tabName) {
       
       <img
         class="image-class"
-        src="https://raw.githubusercontent.com/meshery-extensions/meshery-extensions-packages/master/action-assets/design-assets/.png"
+        src="https://cdn.jsdelivr.net/gh/meshery-extensions/meshery-extensions-packages@master/action-assets/design-assets/.png"
         onerror="this.src='/assets/images/webassembly_logo.svg'"
         loading="lazy"
+        decoding="async"
         onclick="toggleFullScreenImage('')"
       />
       
       <div class="related-patterns-img">
         <h4 class="related-patterns">RELATED DESIGNS</h4>
         <!-- more conditions will be needed to be added when more patterns are introduced.  -->
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
 
     
 
@@ -8373,6 +8728,52 @@ function openTab(evt, tabName) {
 
     
 
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
 
       </div>
    
@@ -8389,17 +8790,15 @@ function openTab(evt, tabName) {
 
        
         
-        <a href="/catalog/https://raw.githubusercontent.com/meshery-extensions/wasm-filters/master/singleton_http_call_bg.wasm" download="Singleton HTTP Call.yml">
-          <button id="resourceDownloadBtn" data-patternId="" onclick="sendCloudTelemetry()"
-            class="import import-brand-secondary" style="width: 7rem;">
-            Download
-          </button>
+        <a class="cstore-cta-secondary" id="resourceDownloadBtn" data-patternId=""
+          onclick="sendCloudTelemetry()" href="/catalog/https://raw.githubusercontent.com/meshery-extensions/wasm-filters/master/singleton_http_call_bg.wasm" download="Singleton HTTP Call.yml">
+          Download
         </a>
 
         <div class="btn-tooltip-grp">
           <a class="btn tooltip-modal" data-clipboard-target="#copy-url" data-clipboard-text=""
             onmouseout="resetCopyText(this)">
-            <button class="import import-brand-tertiary" style="width: 7rem;">
+            <button class="import import-brand-tertiary copy-url-btn" style="width: 7rem;">
               Copy URL
             </button>
           </a>
@@ -8473,7 +8872,7 @@ function openTab(evt, tabName) {
         });
 
         btnClose[i].addEventListener('click', function () {
-            modal[i].style.visiblity = "hidden";
+            modal[i].style.visibility = "hidden";
             modal[i].style.opacity = "0";
             modal[i].style.pointerEvents = "none";
 
@@ -8482,7 +8881,7 @@ function openTab(evt, tabName) {
         modal[i].addEventListener('click', function (event) {
             let clickId = event.target.id
             if (clickId === "open-modal") {
-                modal[i].style.visiblity = "hidden";
+                modal[i].style.visibility = "hidden";
                 modal[i].style.opacity = "0";
                 modal[i].style.pointerEvents = "none";
             }
@@ -8511,7 +8910,7 @@ function openTab(evt, tabName) {
            <small class="pattern-type"> WASM FILTER</small>
        </div>
        <h4 class="pattern-name">Metrics Store</h4>
-       <img class= "pattern-filter-image" src="https://raw.githubusercontent.com/meshery-extensions/meshery-extensions-packages/master/action-assets/design-assets/.png" onerror="this.src='/assets/images/webassembly_logo.svg'" loading="lazy"/>
+       <img class= "pattern-filter-image" src="https://cdn.jsdelivr.net/gh/meshery-extensions/meshery-extensions-packages@master/action-assets/design-assets/.png" onerror="this.src='/assets/images/webassembly_logo.svg'" loading="lazy" decoding="async"/>
        <div>
     
     <h6 class="pattern-id">
@@ -8551,15 +8950,62 @@ function openTab(evt, tabName) {
       
       <img
         class="image-class"
-        src="https://raw.githubusercontent.com/meshery-extensions/meshery-extensions-packages/master/action-assets/design-assets/.png"
+        src="https://cdn.jsdelivr.net/gh/meshery-extensions/meshery-extensions-packages@master/action-assets/design-assets/.png"
         onerror="this.src='/assets/images/webassembly_logo.svg'"
         loading="lazy"
+        decoding="async"
         onclick="toggleFullScreenImage('')"
       />
       
       <div class="related-patterns-img">
         <h4 class="related-patterns">RELATED DESIGNS</h4>
         <!-- more conditions will be needed to be added when more patterns are introduced.  -->
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
 
     
 
@@ -10201,6 +10647,52 @@ function openTab(evt, tabName) {
 
     
 
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
 
       </div>
    
@@ -10217,17 +10709,15 @@ function openTab(evt, tabName) {
 
        
         
-        <a href="/catalog/https://github.com/meshery-extensions/wasm-filters/releases/download/v0.2.3/metrics_collector_bg.wasm" download="Metrics Store.yml">
-          <button id="resourceDownloadBtn" data-patternId="" onclick="sendCloudTelemetry()"
-            class="import import-brand-secondary" style="width: 7rem;">
-            Download
-          </button>
+        <a class="cstore-cta-secondary" id="resourceDownloadBtn" data-patternId=""
+          onclick="sendCloudTelemetry()" href="/catalog/https://github.com/meshery-extensions/wasm-filters/releases/download/v0.2.3/metrics_collector_bg.wasm" download="Metrics Store.yml">
+          Download
         </a>
 
         <div class="btn-tooltip-grp">
           <a class="btn tooltip-modal" data-clipboard-target="#copy-url" data-clipboard-text="https://github.com/meshery-extensions/wasm-filters/releases/download/v0.2.3/metrics_collector_bg.wasm"
             onmouseout="resetCopyText(this)">
-            <button class="import import-brand-tertiary" style="width: 7rem;">
+            <button class="import import-brand-tertiary copy-url-btn" style="width: 7rem;">
               Copy URL
             </button>
           </a>
@@ -10301,7 +10791,7 @@ function openTab(evt, tabName) {
         });
 
         btnClose[i].addEventListener('click', function () {
-            modal[i].style.visiblity = "hidden";
+            modal[i].style.visibility = "hidden";
             modal[i].style.opacity = "0";
             modal[i].style.pointerEvents = "none";
 
@@ -10310,7 +10800,7 @@ function openTab(evt, tabName) {
         modal[i].addEventListener('click', function (event) {
             let clickId = event.target.id
             if (clickId === "open-modal") {
-                modal[i].style.visiblity = "hidden";
+                modal[i].style.visibility = "hidden";
                 modal[i].style.opacity = "0";
                 modal[i].style.pointerEvents = "none";
             }
@@ -10339,7 +10829,7 @@ function openTab(evt, tabName) {
            <small class="pattern-type"> WASM FILTER</small>
        </div>
        <h4 class="pattern-name">Singleton Queue</h4>
-       <img class= "pattern-filter-image" src="https://raw.githubusercontent.com/meshery-extensions/meshery-extensions-packages/master/action-assets/design-assets/.png" onerror="this.src='/assets/images/webassembly_logo.svg'" loading="lazy"/>
+       <img class= "pattern-filter-image" src="https://cdn.jsdelivr.net/gh/meshery-extensions/meshery-extensions-packages@master/action-assets/design-assets/.png" onerror="this.src='/assets/images/webassembly_logo.svg'" loading="lazy" decoding="async"/>
        <div>
     
     <h6 class="pattern-id">
@@ -10379,15 +10869,62 @@ function openTab(evt, tabName) {
       
       <img
         class="image-class"
-        src="https://raw.githubusercontent.com/meshery-extensions/meshery-extensions-packages/master/action-assets/design-assets/.png"
+        src="https://cdn.jsdelivr.net/gh/meshery-extensions/meshery-extensions-packages@master/action-assets/design-assets/.png"
         onerror="this.src='/assets/images/webassembly_logo.svg'"
         loading="lazy"
+        decoding="async"
         onclick="toggleFullScreenImage('')"
       />
       
       <div class="related-patterns-img">
         <h4 class="related-patterns">RELATED DESIGNS</h4>
         <!-- more conditions will be needed to be added when more patterns are introduced.  -->
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
 
     
 
@@ -12029,6 +12566,52 @@ function openTab(evt, tabName) {
 
     
 
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
 
       </div>
    
@@ -12045,17 +12628,15 @@ function openTab(evt, tabName) {
 
        
         
-        <a href="/catalog/https://github.com/meshery-extensions/wasm-filters/releases/download/v0.2.3/singleton_http_call_bg.wasm" download="Singleton Queue.yml">
-          <button id="resourceDownloadBtn" data-patternId="" onclick="sendCloudTelemetry()"
-            class="import import-brand-secondary" style="width: 7rem;">
-            Download
-          </button>
+        <a class="cstore-cta-secondary" id="resourceDownloadBtn" data-patternId=""
+          onclick="sendCloudTelemetry()" href="/catalog/https://github.com/meshery-extensions/wasm-filters/releases/download/v0.2.3/singleton_http_call_bg.wasm" download="Singleton Queue.yml">
+          Download
         </a>
 
         <div class="btn-tooltip-grp">
           <a class="btn tooltip-modal" data-clipboard-target="#copy-url" data-clipboard-text="https://github.com/meshery-extensions/wasm-filters/releases/download/v0.2.3/singleton_http_call_bg.wasm"
             onmouseout="resetCopyText(this)">
-            <button class="import import-brand-tertiary" style="width: 7rem;">
+            <button class="import import-brand-tertiary copy-url-btn" style="width: 7rem;">
               Copy URL
             </button>
           </a>
@@ -12129,7 +12710,7 @@ function openTab(evt, tabName) {
         });
 
         btnClose[i].addEventListener('click', function () {
-            modal[i].style.visiblity = "hidden";
+            modal[i].style.visibility = "hidden";
             modal[i].style.opacity = "0";
             modal[i].style.pointerEvents = "none";
 
@@ -12138,7 +12719,7 @@ function openTab(evt, tabName) {
         modal[i].addEventListener('click', function (event) {
             let clickId = event.target.id
             if (clickId === "open-modal") {
-                modal[i].style.visiblity = "hidden";
+                modal[i].style.visibility = "hidden";
                 modal[i].style.opacity = "0";
                 modal[i].style.pointerEvents = "none";
             }
@@ -12167,7 +12748,7 @@ function openTab(evt, tabName) {
            <small class="pattern-type"> WASM FILTER</small>
        </div>
        <h4 class="pattern-name">JWT Filter</h4>
-       <img class= "pattern-filter-image" src="https://raw.githubusercontent.com/meshery-extensions/meshery-extensions-packages/master/action-assets/design-assets/.png" onerror="this.src='/assets/images/webassembly_logo.svg'" loading="lazy"/>
+       <img class= "pattern-filter-image" src="https://cdn.jsdelivr.net/gh/meshery-extensions/meshery-extensions-packages@master/action-assets/design-assets/.png" onerror="this.src='/assets/images/webassembly_logo.svg'" loading="lazy" decoding="async"/>
        <div>
     
     <h6 class="pattern-id">
@@ -12207,15 +12788,62 @@ function openTab(evt, tabName) {
       
       <img
         class="image-class"
-        src="https://raw.githubusercontent.com/meshery-extensions/meshery-extensions-packages/master/action-assets/design-assets/.png"
+        src="https://cdn.jsdelivr.net/gh/meshery-extensions/meshery-extensions-packages@master/action-assets/design-assets/.png"
         onerror="this.src='/assets/images/webassembly_logo.svg'"
         loading="lazy"
+        decoding="async"
         onclick="toggleFullScreenImage('')"
       />
       
       <div class="related-patterns-img">
         <h4 class="related-patterns">RELATED DESIGNS</h4>
         <!-- more conditions will be needed to be added when more patterns are introduced.  -->
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
 
     
 
@@ -13857,6 +14485,52 @@ function openTab(evt, tabName) {
 
     
 
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
 
       </div>
    
@@ -13873,17 +14547,15 @@ function openTab(evt, tabName) {
 
        
         
-        <a href="/catalog/https://github.com/meshery-extensions/wasm-filters/releases/download/v0.2.3/jwt_filter_bg.wasm" download="JWT Filter.yml">
-          <button id="resourceDownloadBtn" data-patternId="" onclick="sendCloudTelemetry()"
-            class="import import-brand-secondary" style="width: 7rem;">
-            Download
-          </button>
+        <a class="cstore-cta-secondary" id="resourceDownloadBtn" data-patternId=""
+          onclick="sendCloudTelemetry()" href="/catalog/https://github.com/meshery-extensions/wasm-filters/releases/download/v0.2.3/jwt_filter_bg.wasm" download="JWT Filter.yml">
+          Download
         </a>
 
         <div class="btn-tooltip-grp">
           <a class="btn tooltip-modal" data-clipboard-target="#copy-url" data-clipboard-text="https://github.com/meshery-extensions/wasm-filters/releases/download/v0.2.3/jwt_filter_bg.wasm"
             onmouseout="resetCopyText(this)">
-            <button class="import import-brand-tertiary" style="width: 7rem;">
+            <button class="import import-brand-tertiary copy-url-btn" style="width: 7rem;">
               Copy URL
             </button>
           </a>
@@ -13957,7 +14629,7 @@ function openTab(evt, tabName) {
         });
 
         btnClose[i].addEventListener('click', function () {
-            modal[i].style.visiblity = "hidden";
+            modal[i].style.visibility = "hidden";
             modal[i].style.opacity = "0";
             modal[i].style.pointerEvents = "none";
 
@@ -13966,7 +14638,7 @@ function openTab(evt, tabName) {
         modal[i].addEventListener('click', function (event) {
             let clickId = event.target.id
             if (clickId === "open-modal") {
-                modal[i].style.visiblity = "hidden";
+                modal[i].style.visibility = "hidden";
                 modal[i].style.opacity = "0";
                 modal[i].style.pointerEvents = "none";
             }
@@ -14076,7 +14748,7 @@ function openTab(evt, tabName) {
   border-radius: 7px;
   padding: 0.5rem;
   margin: 0 10px;
-  background: #00b39f;
+  background: var(--brand-color-secondary);
     }
     
 
@@ -14212,6 +14884,7 @@ function openTab(evt, tabName) {
 		</div>
 	</section>
 
+</main>
 
 <footer>
 	<div class="container">
@@ -14281,7 +14954,7 @@ function openTab(evt, tabName) {
 " class="forum-icon" >
 						
 						
-		<svg fill="#000000" height="18" viewBox="0 0 32 32" weight="18" xmlns="http://www.w3.org/2000/svg"><circle cx="22" cy="6.5" r="2.5"/><circle cx="10" cy="6.5" r="2.5"/><path d="M8,11h5.3a3.724,3.724,0,0,0-6.67.137A6.97,6.97,0,0,1,8,11Z"/><circle cx="22" cy="21.5" r="2.5"/><circle cx="10" cy="21.5" r="2.5"/><path d="M24,11a6.97,6.97,0,0,1,1.372.137A3.724,3.724,0,0,0,18.7,11Z"/><path d="M17.78,23a4.27,4.27,0,0,1-.28-1.5,4.5,4.5,0,0,1,9,0,4.2,4.2,0,0,1-.1.86A4.984,4.984,0,0,0,24,13H8a4.984,4.984,0,0,0-2.4,9.36,4.2,4.2,0,0,1-.1-.86,4.5,4.5,0,0,1,9,0,4.27,4.27,0,0,1-.28,1.5Z"/><path d="M25.75,27.75h0A3.75,3.75,0,0,0,22,24h0a3.75,3.75,0,0,0-3.75,3.75h0A1.25,1.25,0,0,0,19.5,29h5A1.25,1.25,0,0,0,25.75,27.75Z"/><path d="M6.25,27.75h0A3.75,3.75,0,0,1,10,24h0a3.75,3.75,0,0,1,3.75,3.75h0A1.25,1.25,0,0,1,12.5,29h-5A1.25,1.25,0,0,1,6.25,27.75Z"/></svg>
+		<svg fill="#000000" height="18" viewBox="0 0 32 32" width="18" xmlns="http://www.w3.org/2000/svg"><circle cx="22" cy="6.5" r="2.5"/><circle cx="10" cy="6.5" r="2.5"/><path d="M8,11h5.3a3.724,3.724,0,0,0-6.67.137A6.97,6.97,0,0,1,8,11Z"/><circle cx="22" cy="21.5" r="2.5"/><circle cx="10" cy="21.5" r="2.5"/><path d="M24,11a6.97,6.97,0,0,1,1.372.137A3.724,3.724,0,0,0,18.7,11Z"/><path d="M17.78,23a4.27,4.27,0,0,1-.28-1.5,4.5,4.5,0,0,1,9,0,4.2,4.2,0,0,1-.1.86A4.984,4.984,0,0,0,24,13H8a4.984,4.984,0,0,0-2.4,9.36,4.2,4.2,0,0,1-.1-.86,4.5,4.5,0,0,1,9,0,4.27,4.27,0,0,1-.28,1.5Z"/><path d="M25.75,27.75h0A3.75,3.75,0,0,0,22,24h0a3.75,3.75,0,0,0-3.75,3.75h0A1.25,1.25,0,0,0,19.5,29h5A1.25,1.25,0,0,0,25.75,27.75Z"/><path d="M6.25,27.75h0A3.75,3.75,0,0,1,10,24h0a3.75,3.75,0,0,1,3.75,3.75h0A1.25,1.25,0,0,1,12.5,29h-5A1.25,1.25,0,0,1,6.25,27.75Z"/></svg>
 	
 
 						
@@ -14491,7 +15164,11 @@ function openTab(evt, tabName) {
 
 	</div>
 </footer>
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js" integrity="sha384-vk5WoKIaW/vJyUAd9n/wmopsmNhiy+L2Z+SBxGYnUkunIxVxAv/UtMOhba/xskxh" crossorigin="anonymous"></script>
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.css" integrity="sha384-Q8BgkilbsFGYNNiDqJm69hvDS7NCJWOodvfK/cwTyQD4VQA0qKzuPpvqNER1UC0F" crossorigin="anonymous" />
+<script src="https://cdn.jsdelivr.net/gh/fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.js" integrity="sha384-Zm+UU4tdcfAm29vg+MTbfu//q5B/lInMbMCr4T8c9rQFyOv6PlfQYpB5wItcXWe7" crossorigin="anonymous"></script>
+
 
 <script src="/js/stellarnav.min.js"></script>
 
@@ -14505,10 +15182,14 @@ function openTab(evt, tabName) {
 		jQuery('.stellarnav.mobile').css('text-align', 'end');
 	});
 </script>
-<!--Script for Copy to Clipboard-->
-<script src="https://cdn.jsdelivr.net/npm/clipboard@2/dist/clipboard.min.js"></script>
-<script src="/js/vanilla-tilt.min.js"></script>
 
+
+<!--Script for Copy to Clipboard-->
+
+
+
+
+<script src="https://cdn.jsdelivr.net/npm/clipboard@2.0.11/dist/clipboard.min.js" integrity="sha384-J08i8An/QeARD9ExYpvphB8BsyOj3Gh2TSh1aLINKO3L0cMSH2dN3E22zFoXEi0Q" crossorigin="anonymous"></script>
 <script>
 
     // Functionality for the copy button next to the ID/UUID in Catalog Details
@@ -14570,32 +15251,8 @@ function openTab(evt, tabName) {
 	});
 </script>
 
-<script>
-	function displayCode(id) {
-		var divId = id + "_code";
-		var element = document.getElementById(divId);
-		var isOpening = !element.classList.contains("showDiv");
-		element.classList.toggle("showDiv");
-		var toggleDivs = document.getElementsByClassName("toggle");
-		if (element.style.maxHeight) {
-			element.style.maxHeight = null;
-		} else {
-			element.style.maxHeight = element.scrollHeight + "px";
-		}
-		for (let i = 0; i < toggleDivs.length; i++) {
-			if (toggleDivs[i] != element) {
-				toggleDivs[i].classList.remove("showDiv");
-				if (toggleDivs[i].style.maxHeight) {
-					toggleDivs[i].style.maxHeight = null;
-				}
-			}
-		}
-		var platformOptions = document.querySelectorAll(".platform-option");
-		platformOptions.forEach(function(option) {
-			option.classList.toggle("selected", option.id === id && isOpening);
-		});
-	}
-</script>
+
+
 <script type="text/javascript">
 	let toggleBtn = document.getElementById("mode-toggle-btn")
 	toggleBtn.onclick = setMode;
@@ -14640,40 +15297,7 @@ function openTab(evt, tabName) {
 
 </script>
 
-<script src="https://cdn.jsdelivr.net/npm/slick-carousel@1.8.1/slick/slick.min.js"></script>
-<script>
-  $(document).ready(function () {
-    $('.testimonials-slider').slick({
-      centerMode: true,
-      centerPadding: '0px',
-      dots: false,
-      arrows: false,
-      infinite: true,
-      speed: 400,
-      slidesToShow: 3,
-      slidesToScroll: 1,
-      autoplay: true,
-      autoplaySpeed: 1500,
 
-      responsive: [
-        {
-          breakpoint: 1140,
-          settings: {
-            slidesToShow: 2,
-            centerMode: false,
-          }
-        },
-        {
-          breakpoint: 800,
-          settings: {
-            slidesToShow: 1,
-            centerMode: false,
-          }
-        }
-      ]
-    });
-  });
-</script>
 </body>
 
 </html>
